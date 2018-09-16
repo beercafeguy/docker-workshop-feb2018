@@ -14,6 +14,15 @@ docker info
 ## Excecute Docker image
 docker run hello-world
 
+
+#Running kafka in docker
+docker network create -d bridge kafka-net
+docker run -d --name zookeeper -p 2181:2181 zookeeper
+docker run -d --name kafka -p 9092:9092 -p 7203:7203 --network kafka-net --env KAFKA_ADVERTISED_HOST_NAME=192.168.1.109 --env ZOOKEEPER_IP=192.168.1.109 ches/kafka
+docker run --rm --network kafka-net ches/kafka kafka-topics.sh --create --topic orders-out --replication-factor 1 --partitions 2 --zookeeper 192.168.1.109:2181
+
+
+
 ## List Docker images
 docker image ls
 
@@ -88,3 +97,4 @@ docker-machine ssh myvm1 "docker stack deploy -c <file> <app>"   # Deploy an app
 eval $(docker-machine env -u)     # Disconnect shell from VMs, use native docker
 docker-machine stop $(docker-machine ls -q)               # Stop all running VMs
 docker-machine rm $(docker-machine ls -q) # Delete all VMs and their disk images
+
